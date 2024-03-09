@@ -6,6 +6,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--csv", type=str, required=True)
 args = parser.parse_args()
 
+# Read in CSV
 with open(args.csv, newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',', )
     header = None
@@ -21,5 +22,6 @@ with open(args.csv, newline='') as csvfile:
 
         data.append(point)
 
+# Write to JS
 with open(str(args.csv).removesuffix("csv") + "js", "w") as f:
     f.write("let data = " + json.dumps(data))

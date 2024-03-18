@@ -30,7 +30,7 @@
 </div>
 
 <script src="d3.v7.min.js"></script>
-<script src="2024-03-08-10-12-smartdashboard.js"></script>
+<script src="2024-03-09-09-42-smartdashboard.js"></script>
 <script>
     // Constants and helpers
     const ctx = document.getElementById("canvas").getContext("2d");
@@ -56,7 +56,7 @@
     let endIndex = 0;
     const startTime = Number(data[startIndex]["time"]);
 
-    while (Number(data[endIndex]["time"]) - startTime < 154) {
+    while (endIndex < data.length && Number(data[endIndex]["time"]) - startTime < 154) {
         ++endIndex;
     }
 

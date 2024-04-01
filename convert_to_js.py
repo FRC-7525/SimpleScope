@@ -22,6 +22,8 @@ with open(args.csv, newline='') as csvfile:
 
         data.append(point)
 
+# print(json.dumps(data))
+
 # Write to JS
 with open(str(args.csv).removesuffix("csv") + "js", "w") as f:
     f.write("let data = " + json.dumps(data))

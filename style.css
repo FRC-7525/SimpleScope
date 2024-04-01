@@ -1,5 +1,10 @@
+html {
+  background-color: #1e1e2e;
+  color: #cdd6f4;
+}
+
 body {
-    font-family: "Helvetica Neue", "Lato", sans-serif;
+    font-family: "Helvetica Neue", "Lato", monospace;
 }
 
 .app {
@@ -28,4 +33,21 @@ canvas {
 
 #timeSlider {
     width: calc(100% - 120px);
+}
+
+table {
+  border-collapse: collapse;
+  margin: 8px;
+}
+
+#button, button {
+  border-radius: 7px;
+  background-color: #45475a;
+  color: #cdd6f4;
+}
+
+th,
+td {
+  border: 1px solid white;
+  padding: 8px;
 }

@@ -41,6 +41,7 @@ table {
 }
 
 #button, button {
+  margin-right: 8px;
   border-radius: 7px;
   background-color: #45475a;
   color: #cdd6f4;

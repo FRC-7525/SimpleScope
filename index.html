@@ -1,183 +1,242 @@
+<!DOCTYPE html>
 <html>
+
 <head>
-    <link href="style.css" rel="stylesheet" type="text/css" />
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <title>SimpleScope</title>
 </head>
 
 <body>
-<div class="app">
+  <div class="app">
     <h2>SimpleScope</h2>
+
     <div class="imageWrapper">
-        <canvas id="canvas" height="324" width="645"></canvas>
-        <br />
-        <div class="controlButtons">
-            <input type="button" value="Play/Pause" class="playPause" onclick="playing = !playing;" />
-            <input type="range" id="timeSlider" oninput="onSliderChange()" value="0" />
-        </div>
-    </div>
+      <canvas id="canvas" height="324" width="645"></canvas>
+      <br />
+      <div class="controlButtons">
+        <input type="button" value="Play/Pause" class="playPause" onclick="playing = !playing;" id="button" />
+        <input type="button" value="<" id="button" onclick="stepLogging(true);" />
+        <input type="button" value=">" id="button" onclick="stepLogging();" />
 
-    <p>Match State: <span id="matchState"></span></p>
-    <p>Match Time: <span id="matchTime"></span></p>
-    <p>Manager State: <span id="managerState"></span></p>
+        <input type="range" id="timeSlider" oninput="onSliderChange()" value="0" />
 
-    <table id="cycleTime">
-        <caption>Teleop Cycle Time Analysis</caption>
+      </div>
+
+      <p>Match State: <span id="matchState"></span></p>
+      <p>Match Time: <span id="matchTime"></span></p>
+      <p>Manager State: <span id="managerState"></span></p>
+      <p>Robot X: <span id="robotX"></span></p>
+      <p>Robot Y: <span id="robotY"></span></p>
+      <p>Robot Rotation: <span id="robotRotation"></span></p>
+
+      <table id="cycleTime">
+        <h3>Teleop Cycle Time Analysis</h3>
         <tr>
-            <th scope="col">Teleop Time</th>
-            <th scope="col">Manager State</th>
-            <th scope="col">Diff Time</th>
+          <th scope="col">Teleop Time</th>
+          <th scope="col">Manager State</th>
+          <th scope="col">Diff Time</th>
         </tr>
-    </table>
-</div>
+      </table>
 
-<script src="d3.v7.min.js"></script>
-<script src="2024-03-09-09-42-smartdashboard.js"></script>
-<script>
-    // Constants and helpers
-    const ctx = document.getElementById("canvas").getContext("2d");
-    const degreesToRadians = (x) => {
-        return (x * Math.PI) / 180;
-    };
+      <hr>
 
-    const ROBOT_SIDE = 0.71;
-    const FIELD_WIDTH = 16.54;
-    const FIELD_HEIGHT = 8.21;
-    const FIELD_CANVAS_WIDTH = 645;
-    const FIELD_CANVAS_HEIGHT = 324;
-    let i = 0;
-    let playing = false;
+      <button onclick="document.getElementById('changedFile').click()">Choose File...</button>
+      <input onchange="changedFile(event);" type="file" accept=".csv" id="changedFile" style="display: none"></input>
 
-    // Find start of match
-    while (data[i]["Match State"] !== "AUTONOMOUS") {
-        ++i;
-    }
-    const startIndex = i;
+      <script>
+        let playing = false;
+        let i = 0;
+        let endIndex = 0;
+      </script>
 
-    // Find end of match
-    let endIndex = 0;
-    const startTime = Number(data[startIndex]["time"]);
+      <script src="js/d3.v7.min.js"></script>
+      <script src="js/funcs.js"></script>
+      <script>
+        function initialize(data) {
+          // Constants and helpers
+          const ctx = document.getElementById("canvas").getContext("2d");
 
-    while (endIndex < data.length && Number(data[endIndex]["time"]) - startTime < 154) {
-        ++endIndex;
-    }
+          const ROBOT_SIDE = 0.71;
+          const FIELD_WIDTH = 16.54;
+          const FIELD_HEIGHT = 8.21;
+          const FIELD_CANVAS_WIDTH = 645;
+          const FIELD_CANVAS_HEIGHT = 324;
+          i = 0;
+          playing = false;
 
-    // Create scaling for Field2D viz
-    const sliderToIndexScale = d3.scaleLinear()
-        .domain([0, 100])
-        .range([startIndex, endIndex]);
+          // Find start of match
 
-    const indexToSliderScale = d3.scaleLinear()
-        .domain([startIndex, endIndex])
-        .range([0, 100])
-
-    const fieldWidthScale = d3.scaleLinear()
-        .domain([0, FIELD_WIDTH])
-        .range([0, FIELD_CANVAS_WIDTH]);
-
-    const fieldHeightScale = d3.scaleLinear()
-        .domain([0, FIELD_HEIGHT])
-        .range([FIELD_CANVAS_HEIGHT, 0]);
-
-    const FIELD_ROBOT_SIDE = fieldWidthScale(ROBOT_SIDE);
-
-    // Drawing function for Field2D
-    const draw = () => {
-        let item = data[i];
-        const robotX = Number(item["Robot X"]);
-        const robotY = Number(item["Robot Y"]);
-        const fieldX = fieldWidthScale(robotX);
-        const fieldY = fieldHeightScale(robotY);
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.drawImage(img, 0, 0, 645, 324);
-        ctx.translate(fieldX, fieldY)
-        ctx.rotate(degreesToRadians(Number(item["Robot Theta (deg)"])))
-        ctx.translate(-fieldX, -fieldY)
-        ctx.strokeStyle = "white";
-        ctx.strokeRect(fieldX - (FIELD_ROBOT_SIDE / 2), fieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
-        let matchState = data[i]["Match State"];
-        if (matchState === "AUTONOMOUS") {
-            matchState += ` (running: ${data[i]["Currently selected autonomous"]})`;
-        }
-
-        document.getElementById("matchState").innerHTML = matchState;
-        document.getElementById("matchTime").innerHTML = String((Number(data[i]["time"]) - startTime).toFixed(2)) + " sec";
-        document.getElementById("managerState").innerHTML = data[i]["Manager State"];
-    };
-
-    // Match slider
-    const onSliderChange = (e) => {
-        const slider = document.getElementById("timeSlider");
-        i = Math.round(sliderToIndexScale(slider.value));
-        draw();
-    };
-    
-    // Field drawing
-    const img = new Image();
-    img.onload = () => {
-        draw();
-    }
-    img.src = "field.png";
-
-    // Event loop for playing (inefficient, but that's okay)
-    setInterval(() => {
-        if (playing) {
-            draw();
-            const slider = document.getElementById("timeSlider");
-            slider.value = indexToSliderScale(i);
+          while (data[i]["Match State"] !== "AUTONOMOUS") {
             ++i;
-        }
-    }, 90); // Adjust this value for playback speed
+          }
 
-    // Create shot cycle analysis
-    let cycleIndex = startIndex;
-    managerState = "";
-    firstShots = [];
-    let teleopStart = undefined;
-    while (cycleIndex < endIndex) {
-        if (data[cycleIndex]["Match State"] !== "TELEOP") {
+          startIndex = i;
+
+          // Find end of match
+          endIndex = 0;
+          const startTime = Number(data[startIndex]["time"]);
+
+          while (endIndex < data.length && Number(data[endIndex]["time"]) - startTime < 154) {
+            ++endIndex;
+          }
+
+          // Create scaling for Field2D viz
+          sliderToIndexScale = d3.scaleLinear()
+            .domain([0, 100])
+            .range([startIndex, endIndex]);
+
+          indexToSliderScale = d3.scaleLinear()
+            .domain([startIndex, endIndex])
+            .range([0, 100])
+
+          const fieldWidthScale = d3.scaleLinear()
+            .domain([0, FIELD_WIDTH])
+            .range([0, FIELD_CANVAS_WIDTH]);
+
+          const fieldHeightScale = d3.scaleLinear()
+            .domain([0, FIELD_HEIGHT])
+            .range([FIELD_CANVAS_HEIGHT, 0]);
+
+          const FIELD_ROBOT_SIDE = fieldWidthScale(ROBOT_SIDE);
+
+          // Drawing function for Field2D
+          draw = () => {
+            let item = data[i];
+            const robotX = Number(item["Robot X"]);
+            const robotY = Number(item["Robot Y"]);
+            const robotRotation = degreesToRadians(Number(item["Robot Theta (deg)"]));
+            const fieldX = fieldWidthScale(robotX);
+            const fieldY = fieldHeightScale(robotY);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.drawImage(img, 0, 0, 645, 324);
+            ctx.translate(fieldX, fieldY)
+            ctx.rotate(robotRotation)
+            ctx.translate(-fieldX, -fieldY)
+            ctx.strokeStyle = "white";
+            ctx.strokeRect(fieldX - (FIELD_ROBOT_SIDE / 2), fieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
+            let matchState = data[i]["Match State"];
+            if (matchState === "AUTONOMOUS") {
+              matchState += ` (running: ${data[i]["Currently selected autonomous"]})`;
+            }
+
+            document.getElementById("matchState").innerHTML = matchState;
+            document.getElementById("matchTime").innerHTML = String((Number(data[i]["time"]) - startTime).toFixed(2)) + " sec";
+            document.getElementById("managerState").innerHTML = data[i]["Manager State"];
+            document.getElementById("robotX").innerHTML = data[i]["Robot X"];
+            document.getElementById("robotY").innerHTML = data[i]["Robot Y"];
+            document.getElementById("robotRotation").innerHTML = degreesToRadians(Number(item["Robot Theta (deg)"]));
+          };
+
+          // Match slider
+          onSliderChange = (e) => {
+            const slider = document.getElementById("timeSlider");
+            i = Math.round(sliderToIndexScale(slider.value));
+            draw();
+          };
+
+          // Field drawing
+          const img = new Image();
+          img.onload = () => {
+            draw();
+          }
+          img.src = "field.png";
+
+          // Event loop for playing (inefficient, but that's okay)
+          setInterval(() => {
+            if (playing) {
+              draw();
+              const slider = document.getElementById("timeSlider");
+              slider.value = indexToSliderScale(i);
+              ++i;
+            }
+          }, 90); // Adjust this value for playback speed
+
+          // Create shot cycle analysis
+          let cycleIndex = startIndex;
+          managerState = "";
+          firstShots = [];
+          let teleopStart = undefined;
+          while (cycleIndex < endIndex) {
+            if (data[cycleIndex]["Match State"] !== "TELEOP") {
+              ++cycleIndex;
+              continue;
+            }
+
+            if (!teleopStart && data[cycleIndex]["Match State"] === "TELEOP") teleopStart = cycleIndex;
+
+            if (data[cycleIndex]["Manager State"] === "Shooting" && managerState !== "Shooting") {
+              firstShots.push(cycleIndex);
+            }
+
+            if (data[cycleIndex]["Manager State"] === "Amp Scoring" && managerState !== "Amp Scoring") {
+              firstShots.push(cycleIndex);
+            }
+
+            managerState = data[cycleIndex]["Manager State"];
             ++cycleIndex;
-            continue;
-        }
+          }
 
-        if (!teleopStart && data[cycleIndex]["Match State"] === "TELEOP") teleopStart = cycleIndex;
+          // Add cycle analysis to table
+          let table = ""; 
 
-        if (data[cycleIndex]["Manager State"] === "Shooting" && managerState !== "Shooting") {
-            firstShots.push(cycleIndex);
-        }
-
-        if (data[cycleIndex]["Manager State"] === "Amp Scoring" && managerState !== "Amp Scoring") {
-            firstShots.push(cycleIndex);
-        }
-
-        managerState = data[cycleIndex]["Manager State"];
-        ++cycleIndex;
-    }
-
-    // Add cycle analysis to table
-    let table = "";
-    let lastTime = Number(data[teleopStart]["time"]);
-    const teleopTimeOffset = lastTime;
-    table += `
-        <tr>
-            <td>0</td>
-            <td>START</td>
-            <td>-</td>
-        </tr>
-    `;
-
-    for (const cycleIndex of firstShots) {
-        let matchTime = Number(data[cycleIndex]["time"]);
-        table += `
+          document.getElementById("cycleTime").innerHTML = `
             <tr>
-                <td>${(matchTime - teleopTimeOffset).toFixed(2)}</td>
-                <td>${data[cycleIndex]["Manager State"]}</td>
-                <td>${(matchTime - lastTime).toFixed(2)}</td>
+              <th scope="col">Teleop Time</th>
+              <th scope="col">Manager State</th>
+              <th scope="col">Diff Time</th>
+            </tr>
+          `;
+
+          let lastTime = Number(data[teleopStart]["time"]);
+          const teleopTimeOffset = lastTime;
+          table += `
+            <tr>
+                <td>0</td>
+                <td>START</td>
+                <td>-</td>
             </tr>
         `;
 
-        lastTime = matchTime;
-    }
+          for (const cycleIndex of firstShots) {
+            let matchTime = Number(data[cycleIndex]["time"]);
+            table += `
+                <tr>
+                    <td>${(matchTime - teleopTimeOffset).toFixed(2)}</td>
+                    <td>${data[cycleIndex]["Manager State"]}</td>
+                    <td>${(matchTime - lastTime).toFixed(2)}</td>
+                </tr>
+            `;
 
-    document.getElementById("cycleTime").innerHTML += table;
-</script>
+            lastTime = matchTime;
+          }
+
+          document.getElementById("cycleTime").innerHTML += table;
+        }
+
+        stepLogging = (backwards) => {
+          if (backwards) {
+            i--;
+          } else {
+            i++;
+          }
+
+          i = clamp(i, startIndex, endIndex);
+
+          const slider = document.getElementById("timeSlider");
+          slider.value = indexToSliderScale(i);
+
+          draw();
+        };
+
+        async function changedFile(event) {
+          const file = event.target.files.item(0)
+          const text = await file.text();
+
+          await initialize(csvJSON(text));
+        }
+
+      </script>
+    </div>
 </body>
+
 </html>

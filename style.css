@@ -4,35 +4,35 @@ html {
 }
 
 body {
-    font-family: "Helvetica Neue", "Lato", monospace;
+  font-family: "Helvetica Neue", "Lato", monospace;
 }
 
 .app {
-    margin: 16px auto 0 auto;
-    width: fit-content;
+  margin: 16px auto 0 auto;
+  width: fit-content;
 }
 
 canvas {
-    border-radius: 8px;
+  border-radius: 8px;
 }
 
 .imageWrapper {
-    width: fit-content;
+  width: fit-content;
 }
 
 .controlButtons {
-    display: flex;
-    width: 100%;
-    justify-content: space-evenly;
-    margin-top: 8px;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  margin-top: 8px;
 }
 
 .playPause {
-    width: 100px;
+  width: 100px;
 }
 
 #timeSlider {
-    width: calc(100% - 120px);
+  width: calc(100% - 120px);
 }
 
 table {
@@ -47,8 +47,7 @@ table {
   color: #cdd6f4;
 }
 
-th,
-td {
+th, td {
   border: 1px solid white;
   padding: 8px;
 }

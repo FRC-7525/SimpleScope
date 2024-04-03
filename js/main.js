@@ -187,6 +187,6 @@ stepLogging = (backwards) => {
 async function changedFile(event) {
   const file = event.target.files.item(0)
   const text = await file.text();
-
+  
   initialize(csvJSON(text));
 }

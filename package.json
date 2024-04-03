@@ -1,0 +1,21 @@
+{
+  "name": "simplescope",
+  "version": "1.0.0",
+  "description": "A simple CSV-based FRC match analyzer",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FRC-7525/SimpleScope.git"
+  },
+  "author": "Team 7525",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/FRC-7525/SimpleScope/issues"
+  },
+  "homepage": "https://github.com/FRC-7525/SimpleScope#readme",
+  "dependencies": {
+    "typescript": "^5.4.3"
+  }
+}

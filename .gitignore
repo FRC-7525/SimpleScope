@@ -3,3 +3,4 @@ data.js
 *.csv
 *.js
 !d3.*
+node_modules/

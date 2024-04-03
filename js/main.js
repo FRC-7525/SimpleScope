@@ -58,7 +58,7 @@ function initialize(data) {
     const fieldX = fieldWidthScale(robotX);
     const fieldY = fieldHeightScale(robotY);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.drawImage(img, 0, 0, 645, 324);
+    ctx.drawImage(img, 0, 0, FIELD_CANVAS_WIDTH, FIELD_CANVAS_HEIGHT);
     ctx.translate(fieldX, fieldY)
     ctx.rotate(robotRotation)
     ctx.translate(-fieldX, -fieldY)

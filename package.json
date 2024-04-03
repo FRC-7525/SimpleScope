@@ -15,7 +15,7 @@
     "url": "https://github.com/FRC-7525/SimpleScope/issues"
   },
   "homepage": "https://github.com/FRC-7525/SimpleScope#readme",
-  "dependencies": {
+  "devDependencies": {
     "typescript": "^5.4.3"
   }
 }

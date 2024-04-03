@@ -89,7 +89,7 @@ function initialize(data) {
   img.onload = () => {
     draw();
   }
-  img.src = "field.png";
+  img.src = "images/field.png";
 
   // Event loop for playing (inefficient, but that's okay)
   setInterval(() => {

@@ -51,14 +51,14 @@ function initialize(data) {
 
   // Drawing function for Field2D
   draw = () => {
-    let item = data[i];
+    const item = data[i];
     const robotX = Number(item["Robot X"]);
     const robotY = Number(item["Robot Y"]);
     const robotRotation = degreesToRadians(Number(item["Robot Theta (deg)"]));
     const fieldX = fieldWidthScale(robotX);
     const fieldY = fieldHeightScale(robotY);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.drawImage(img, 0, 0, 645, 324);
+    ctx.drawImage(img, 0, 0, FIELD_CANVAS_WIDTH, FIELD_CANVAS_HEIGHT);
     ctx.translate(fieldX, fieldY)
     ctx.rotate(robotRotation)
     ctx.translate(-fieldX, -fieldY)
@@ -69,12 +69,12 @@ function initialize(data) {
       matchState += ` (running: ${data[i]["Currently selected autonomous"]})`;
     }
 
-    document.getElementById("matchState").innerHTML = matchState;
-    document.getElementById("matchTime").innerHTML = String((Number(data[i]["time"]) - startTime).toFixed(2)) + " sec";
-    document.getElementById("managerState").innerHTML = data[i]["Manager State"];
-    document.getElementById("robotX").innerHTML = data[i]["Robot X"];
-    document.getElementById("robotY").innerHTML = data[i]["Robot Y"];
-    document.getElementById("robotRotation").innerHTML = degreesToRadians(Number(item["Robot Theta (deg)"]));
+    document.getElementById("matchState").innerHTML = `Match State: ${matchState}`;
+    document.getElementById("matchTime").innerHTML = `Match Time: ${String((Number(data[i]["time"]) - startTime).toFixed(2))} sec`;
+    document.getElementById("managerState").innerHTML = `Manager State ${data[i]["Manager State"]}`;
+    document.getElementById("robotX").innerHTML = `Robot X: ${data[i]["Robot X"]}`;
+    document.getElementById("robotY").innerHTML = `Robot Y: ${data[i]["Robot Y"]}`;
+    document.getElementById("robotRotation").innerHTML = `Robot Rotation: ${degreesToRadians(Number(item["Robot Theta (deg)"]))}`;
   };
 
   // Match slider
@@ -140,6 +140,12 @@ function initialize(data) {
   let lastTime = Number(data[teleopStart]["time"]);
   const teleopTimeOffset = lastTime;
   table += `
+    <h3>Teleop Cycle Time Analysis</h3>
+    <tr>
+        <th scope="col">Teleop Time</th>
+        <th scope="col">Manager State</th>
+        <th scope="col">Diff Time</th>
+    </tr>
     <tr>
         <td>0</td>
         <td>START</td>
@@ -148,7 +154,7 @@ function initialize(data) {
 `;
 
   for (const cycleIndex of firstShots) {
-    let matchTime = Number(data[cycleIndex]["time"]);
+    const matchTime = Number(data[cycleIndex]["time"]);
     table += `
         <tr>
             <td>${(matchTime - teleopTimeOffset).toFixed(2)}</td>
@@ -181,6 +187,6 @@ stepLogging = (backwards) => {
 async function changedFile(event) {
   const file = event.target.files.item(0)
   const text = await file.text();
-
-  await initialize(csvJSON(text));
+  
+  initialize(csvJSON(text));
 }

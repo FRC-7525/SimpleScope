@@ -51,7 +51,7 @@ function initialize(data) {
 
   // Drawing function for Field2D
   draw = () => {
-    let item = data[i];
+    const item = data[i];
     const robotX = Number(item["Robot X"]);
     const robotY = Number(item["Robot Y"]);
     const robotRotation = degreesToRadians(Number(item["Robot Theta (deg)"]));
@@ -148,7 +148,7 @@ function initialize(data) {
 `;
 
   for (const cycleIndex of firstShots) {
-    let matchTime = Number(data[cycleIndex]["time"]);
+    const matchTime = Number(data[cycleIndex]["time"]);
     table += `
         <tr>
             <td>${(matchTime - teleopTimeOffset).toFixed(2)}</td>
@@ -182,5 +182,5 @@ async function changedFile(event) {
   const file = event.target.files.item(0)
   const text = await file.text();
 
-  await initialize(csvJSON(text));
+  initialize(csvJSON(text));
 }

@@ -69,12 +69,12 @@ function initialize(data) {
       matchState += ` (running: ${data[i]["Currently selected autonomous"]})`;
     }
 
-    document.getElementById("matchState").innerHTML = matchState;
-    document.getElementById("matchTime").innerHTML = String((Number(data[i]["time"]) - startTime).toFixed(2)) + " sec";
-    document.getElementById("managerState").innerHTML = data[i]["Manager State"];
-    document.getElementById("robotX").innerHTML = data[i]["Robot X"];
-    document.getElementById("robotY").innerHTML = data[i]["Robot Y"];
-    document.getElementById("robotRotation").innerHTML = degreesToRadians(Number(item["Robot Theta (deg)"]));
+    document.getElementById("matchState").innerHTML = `Match State: ${matchState}`;
+    document.getElementById("matchTime").innerHTML = `Match Time: ${String((Number(data[i]["time"]) - startTime).toFixed(2))} sec`;
+    document.getElementById("managerState").innerHTML = `Manager State ${data[i]["Manager State"]}`;
+    document.getElementById("robotX").innerHTML = `Robot X: ${data[i]["Robot X"]}`;
+    document.getElementById("robotY").innerHTML = `Robot Y: ${data[i]["Robot Y"]}`;
+    document.getElementById("robotRotation").innerHTML = `Robot Rotation: ${degreesToRadians(Number(item["Robot Theta (deg)"]))}`;
   };
 
   // Match slider
@@ -140,6 +140,12 @@ function initialize(data) {
   let lastTime = Number(data[teleopStart]["time"]);
   const teleopTimeOffset = lastTime;
   table += `
+    <h3>Teleop Cycle Time Analysis</h3>
+    <tr>
+        <th scope="col">Teleop Time</th>
+        <th scope="col">Manager State</th>
+        <th scope="col">Diff Time</th>
+    </tr>
     <tr>
         <td>0</td>
         <td>START</td>

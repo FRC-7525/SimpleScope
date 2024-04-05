@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "A simple CSV-based FRC match analyzer",
   "scripts": {
-    "build": "npx webpack build",
-    "serve": "npx webpack serve"
+    "build": "webpack build",
+    "serve": "webpack serve"
   },
   "repository": {
     "type": "git",

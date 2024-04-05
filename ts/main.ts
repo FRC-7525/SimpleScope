@@ -1,4 +1,4 @@
-import * as d3 from "../js/d3.v7.min.js";
+import * as d3 from "d3";
 
 let playing: boolean = false;
 let i: number = 0;
@@ -9,7 +9,7 @@ let draw;
 let indexToSliderScale;
 let sliderToIndexScale;
 
-function initialize(data: object[]) {
+export function initialize(data: object[]) {
   // Constants and helpers
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
   const ctx = canvas.getContext("2d");
@@ -195,6 +195,5 @@ async function changedFile(event) {
     const file = event.target.files.item(0);
     const text = await file.text();
 
-    console.log(typeof csvJSON(text));
     initialize(csvJSON(text));
 }

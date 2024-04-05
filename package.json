@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "A simple CSV-based FRC match analyzer",
   "scripts": {
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "serve": "npx serve"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,14 @@
   },
   "homepage": "https://github.com/FRC-7525/SimpleScope#readme",
   "devDependencies": {
-    "typescript": "^5.4.3"
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.4",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
+  },
+  "dependencies": {
+    "@types/d3": "^7.4.3",
+    "d3": "^7.9.0"
   }
 }

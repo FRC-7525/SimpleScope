@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "outDir": "js"
-    },
-
-    "include": [ "ts/*" ]
+        "target": "es5",
+        "module": "es6",
+        "outDir": "dist",
+        "moduleResolution": "node"
+    }
 }

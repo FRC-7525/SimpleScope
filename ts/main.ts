@@ -82,11 +82,13 @@ function initialize(data: object[]) {
     const visionPose = JSON.parse(item["Front Pose"]);
     const visionX = visionPose[0];
     const visionY = visionPose[1];
+    const visionRot = visionPose[2];
 
     const visionFieldX = fieldWidthScale(visionX);
     const visionFieldY = fieldHeightScale(visionY);
 
-    ctx.strokeStyle = "green"
+    ctx.rotate(visionRot);
+    ctx.strokeStyle = "green";
     ctx.strokeRect(visionFieldX - (FIELD_ROBOT_SIDE / 2), visionFieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
 
     document.getElementById("matchState").innerHTML = `Match State: ${matchState}`;

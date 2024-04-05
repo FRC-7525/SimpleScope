@@ -3,6 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './main.ts',
   context: path.resolve(__dirname, 'ts'),
+  mode: 'development',
   module: {
     rules: [
       {
@@ -16,9 +17,10 @@ module.exports = {
   },
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'public/dist'),
+    path: path.resolve(__dirname, 'public', 'dist'),
+    publicPath: "/dist/"
   },
   devServer: {
-    hot: true
+    hot: true,
   }
 };

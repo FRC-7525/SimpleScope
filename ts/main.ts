@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { degreesToRadians, clamp, csvJSON } from './funcs'
+import { degreesToRadians, clamp, csvJSON } from './funcs';
 
 let playing: boolean = false;
 let i: number = 0;

@@ -1,5 +1,6 @@
 import * as d3 from "d3";
-import { degreesToRadians, clamp, csvJSON } from './funcs';
+import { degreesToRadians, clamp } from './funcs';
+import { parse } from 'csv-parse/browser/esm/sync';
 
 let playing: boolean = false;
 let i: number = 0;
@@ -78,12 +79,23 @@ function initialize(data: object[]) {
       matchState += ` (running: ${data[i]["Currently selected autonomous"]})`;
     }
 
+    const visionPose = JSON.parse(item["Front Pose"]);
+    const visionX = visionPose[0];
+    const visionY = visionPose[1];
+
+    const visionFieldX = fieldWidthScale(visionX);
+    const visionFieldY = fieldHeightScale(visionY);
+
+    ctx.strokeStyle = "green"
+    ctx.strokeRect(visionFieldX - (FIELD_ROBOT_SIDE / 2), visionFieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
+
     document.getElementById("matchState").innerHTML = `Match State: ${matchState}`;
     document.getElementById("matchTime").innerHTML = `Match Time: ${String((Number(data[i]["time"]) - startTime).toFixed(2))} sec`;
     document.getElementById("managerState").innerHTML = `Manager State ${data[i]["Manager State"]}`;
     document.getElementById("robotX").innerHTML = `Robot X: ${data[i]["Robot X"]}`;
     document.getElementById("robotY").innerHTML = `Robot Y: ${data[i]["Robot Y"]}`;
     document.getElementById("robotRotation").innerHTML = `Robot Rotation: ${degreesToRadians(Number(item["Robot Theta (deg)"]))}`;
+    document.getElementById("frontPose").innerHTML = `Front Pose: ${visionX}, ${visionY}`
   };
 
   // Match slider
@@ -196,8 +208,9 @@ const stepLogging = (backwards) => {
 async function changedFile(event) {
     const file = event.target.files.item(0);
     const text = await file.text();
+    const jsonFromCSV = parse(text, {columns: true, skip_empty_lines: true});
 
-    initialize(csvJSON(text));
+    initialize(jsonFromCSV);
 }
 
 document.getElementById("playPause").addEventListener("click", () => { playing = !playing; });

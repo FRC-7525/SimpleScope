@@ -87,7 +87,9 @@ function initialize(data: object[]) {
     const visionFieldX = fieldWidthScale(visionX);
     const visionFieldY = fieldHeightScale(visionY);
 
+    ctx.translate(visionFieldX, visionFieldY)
     ctx.rotate(visionRot);
+    ctx.translate(-visionFieldX, -visionFieldY)
     ctx.strokeStyle = "green";
     ctx.strokeRect(visionFieldX - (FIELD_ROBOT_SIDE / 2), visionFieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
 

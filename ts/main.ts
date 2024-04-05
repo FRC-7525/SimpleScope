@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { degreesToRadians, clamp, csvJSON } from './funcs'
 
 let playing: boolean = false;
 let i: number = 0;
@@ -8,8 +9,9 @@ let startIndex: number = 0;
 let draw;
 let indexToSliderScale;
 let sliderToIndexScale;
+let onSliderChange;
 
-export function initialize(data: object[]) {
+function initialize(data: object[]) {
   // Constants and helpers
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
   const ctx = canvas.getContext("2d");
@@ -85,7 +87,7 @@ export function initialize(data: object[]) {
   };
 
   // Match slider
-  const onSliderChange = (e) => {
+  onSliderChange = (e) => {
     const slider = document.getElementById("timeSlider") as HTMLInputElement;
     i = Math.round(sliderToIndexScale(slider.value));
     draw();
@@ -197,3 +199,9 @@ async function changedFile(event) {
 
     initialize(csvJSON(text));
 }
+
+document.getElementById("playPause").addEventListener("click", () => { playing = !playing; });
+document.getElementById("stepLeft").addEventListener("click", () => { stepLogging(true) });
+document.getElementById("stepRight").addEventListener("click", () => { stepLogging(false) });
+document.getElementById("timeSlider").addEventListener("input", () => { onSliderChange() });
+document.getElementById("changedFile").addEventListener("change", () => { changedFile(event) });

@@ -1,6 +1,3 @@
-data.js
-*-smartdashboard.js
-*.csv
-*.js
-!d3.*
 node_modules/
+dist/
+*.csv

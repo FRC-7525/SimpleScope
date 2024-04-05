@@ -1,10 +1,20 @@
-let playing = false;
-let i = 0;
-let endIndex = 0;
+import * as d3 from "d3";
+import { degreesToRadians, clamp, csvJSON } from './funcs';
 
-function initialize(data) {
+let playing: boolean = false;
+let i: number = 0;
+let endIndex: number = 0;
+let startIndex: number = 0;
+
+let draw;
+let indexToSliderScale;
+let sliderToIndexScale;
+let onSliderChange;
+
+function initialize(data: object[]) {
   // Constants and helpers
-  const ctx = document.getElementById("canvas").getContext("2d");
+  const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d");
 
   const ROBOT_SIDE = 0.71;
   const FIELD_WIDTH = 16.54;
@@ -15,7 +25,6 @@ function initialize(data) {
   playing = false;
 
   // Find start of match
-
   while (data[i]["Match State"] !== "AUTONOMOUS") {
     ++i;
   }
@@ -79,7 +88,7 @@ function initialize(data) {
 
   // Match slider
   onSliderChange = (e) => {
-    const slider = document.getElementById("timeSlider");
+    const slider = document.getElementById("timeSlider") as HTMLInputElement;
     i = Math.round(sliderToIndexScale(slider.value));
     draw();
   };
@@ -95,7 +104,7 @@ function initialize(data) {
   setInterval(() => {
     if (playing) {
       draw();
-      const slider = document.getElementById("timeSlider");
+      const slider = document.getElementById("timeSlider") as HTMLInputElement;
       slider.value = indexToSliderScale(i);
       ++i;
     }
@@ -103,8 +112,8 @@ function initialize(data) {
 
   // Create shot cycle analysis
   let cycleIndex = startIndex;
-  managerState = "";
-  firstShots = [];
+  let managerState = "";
+  let firstShots = [];
   let teleopStart = undefined;
   while (cycleIndex < endIndex) {
     if (data[cycleIndex]["Match State"] !== "TELEOP") {
@@ -169,7 +178,7 @@ function initialize(data) {
   document.getElementById("cycleTime").innerHTML += table;
 }
 
-stepLogging = (backwards) => {
+const stepLogging = (backwards) => {
   if (backwards) {
     i--;
   } else {
@@ -178,15 +187,21 @@ stepLogging = (backwards) => {
 
   i = clamp(i, startIndex, endIndex);
 
-  const slider = document.getElementById("timeSlider");
+  const slider = document.getElementById("timeSlider") as HTMLInputElement;
   slider.value = indexToSliderScale(i);
 
   draw();
-};
+}
 
 async function changedFile(event) {
-  const file = event.target.files.item(0)
-  const text = await file.text();
-  
-  initialize(csvJSON(text));
+    const file = event.target.files.item(0);
+    const text = await file.text();
+
+    initialize(csvJSON(text));
 }
+
+document.getElementById("playPause").addEventListener("click", () => { playing = !playing; });
+document.getElementById("stepLeft").addEventListener("click", () => { stepLogging(true) });
+document.getElementById("stepRight").addEventListener("click", () => { stepLogging(false) });
+document.getElementById("timeSlider").addEventListener("input", () => { onSliderChange() });
+document.getElementById("changedFile").addEventListener("change", () => { changedFile(event) });

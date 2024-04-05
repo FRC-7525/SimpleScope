@@ -27,7 +27,7 @@ canvas {
   margin-top: 8px;
 }
 
-.playPause {
+#playPause {
   width: 100px;
 }
 
@@ -40,7 +40,7 @@ table {
   margin: 8px;
 }
 
-#button, button {
+.button, button {
   margin-right: 8px;
   border-radius: 7px;
   background-color: #45475a;

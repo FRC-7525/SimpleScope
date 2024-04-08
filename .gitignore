@@ -1,4 +1,5 @@
 node_modules/
 dist/
 *.csv
-*smartdashboard.js.firebase/
+*smartdashboard.js
+.firebase/

@@ -140,7 +140,7 @@ function initialize(data: object[]) {
 
   let lastTime = Number(data[teleopStart]["time"]);
   const teleopTimeOffset = lastTime;
-  table += `
+  table = `
     <h3>Teleop Cycle Time Analysis</h3>
     <tr>
         <th scope="col">Teleop Time</th>

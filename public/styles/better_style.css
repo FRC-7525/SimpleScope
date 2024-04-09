@@ -1,0 +1,19 @@
+html {
+  background: linear-gradient(135deg, red, orange, yellow, limegreen, cyan, purple);
+  background-size: cover;
+  font-family: Bradley Hand, cursive;
+}
+
+h2 {@font-face {
+  font-faily: localsans;
+  src: local("../comic.ttf");
+}
+
+
+  font-size: 48px;
+  text-shadow: 0px 0px 5px deeppink;
+}
+
+p {
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+}

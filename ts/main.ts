@@ -82,14 +82,15 @@ function initialize(data: object[]) {
     const visionPose = JSON.parse(item["Front Pose"]);
     const visionX = visionPose[0];
     const visionY = visionPose[1];
-    const visionRot = visionPose[2];
+    const visionRot = degreesToRadians(visionPose[2]);
 
     const visionFieldX = fieldWidthScale(visionX);
     const visionFieldY = fieldHeightScale(visionY);
 
-    ctx.translate(visionFieldX, visionFieldY)
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.translate(visionFieldX, visionFieldY);
     ctx.rotate(visionRot);
-    ctx.translate(-visionFieldX, -visionFieldY)
+    ctx.translate(-visionFieldX, -visionFieldY);
     ctx.strokeStyle = "green";
     ctx.strokeRect(visionFieldX - (FIELD_ROBOT_SIDE / 2), visionFieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
 
@@ -100,6 +101,7 @@ function initialize(data: object[]) {
     document.getElementById("robotY").innerHTML = `Robot Y: ${data[i]["Robot Y"]}`;
     document.getElementById("robotRotation").innerHTML = `Robot Rotation: ${degreesToRadians(Number(item["Robot Theta (deg)"]))}`;
     document.getElementById("frontPose").innerHTML = `Front Pose: ${visionX}, ${visionY}`
+    document.getElementById("visionRotation").innerHTML = `Vision Rotation: ${visionRot}`
   };
 
   // Match slider

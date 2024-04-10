@@ -12,7 +12,11 @@
       <canvas id="canvas" height="324" width="645"></canvas>
 
       <input type="range" id="timeSlider" value="0" />
-      <section class="grid" style="width: 30%;">
+      <section style="width: 30%;display: grid;
+grid-template-columns: 1.5fr repeat(2, .75fr) !important;
+grid-template-rows: 5fr;
+grid-column-gap: 20px;
+grid-row-gap: 0px;" >
         <input type="button" value="Play/Pause" class="button" id="playPause" />
         <div role="group">
           <input type="button" value="<" id="stepLeft" />

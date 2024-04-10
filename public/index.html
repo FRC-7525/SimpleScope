@@ -1,26 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="dark">
 
 <head>
-  <link href="styles/style.css" rel="stylesheet" type="text/css" />
+  <link href="styles/pico.violet.css" rel="stylesheet" type="text/css" />
   <title>SimpleScope</title>
 </head>
 
 <body>
-  <div class="app">
+  <main class="container">
     <h2>SimpleScope</h2>
-
-    <div class="imageWrapper">
       <canvas id="canvas" height="324" width="645"></canvas>
-      <br />
-      <div class="controlButtons">
+
+      <input type="range" id="timeSlider" value="0" />
+      <section class="grid" style="width: 30%;">
         <input type="button" value="Play/Pause" class="button" id="playPause" />
-        <input type="button" value="<" id="stepLeft" class="button"  />
-        <input type="button" value=">" id="stepRight" class="button" />
+        <div role="group">
+          <input type="button" value="<" id="stepLeft" />
+          <input type="button" value=">" id="stepRight" />
+        </div>
 
-        <input type="range" id="timeSlider" value="0" />
-
-      </div>
+      </section>
 
       <p id="matchState"></p>
       <p id="matchTime"></p>
@@ -40,7 +39,7 @@
       <input type="file" accept=".csv" id="changedFile" style="display: none"></input>
 
       <script src="dist/bundle.js"></script>
-    </div>
+    </main>
 </body>
 
 </html>

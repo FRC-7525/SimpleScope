@@ -155,12 +155,12 @@ function initialize(data: object[]) {
 
   // Add cycle analysis to table
   let table = "";
-
+  
   document.getElementById("cycleTime").innerHTML = ``;
 
   let lastTime = Number(data[teleopStart]["time"]);
   const teleopTimeOffset = lastTime;
-  table += `
+  table = `
     <h3>Teleop Cycle Time Analysis</h3>
     <tr>
         <th scope="col">Teleop Time</th>

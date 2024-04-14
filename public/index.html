@@ -8,34 +8,33 @@
 
 <body>
   <main class="container">
-    <center>
-      <h2>SimpleScope</h2>
+      <h2 style="text-align: center;">SimpleScope</h2>
 
-      <canvas id="canvas" height="324" width="645" style="padding-bottom: 50px;"></canvas>
-    </center>
-
-      <input type="range" id="timeSlider" value="0" />
       <center>
-        <section class="grid" style="width: 30%; height: 30%;" />
-          <input type="button" value="Play/Pause" class="button" id="playPause" style="width: 100%;" />
-          <div role="group" />
-            <input type="button" value="<" id="stepLeft" />
-            <input type="button" value=">" id="stepRight" />
-          </div>
-        </section>
+        <canvas id="canvas" height="324" width="645" style="padding-bottom: 50px;"></canvas>
+
+        <input type="range" id="timeSlider" value="0" style="width: 645px;" />
+        <center>
+          <section class="grid" style="width: 30%; height: 30%;" />
+            <input type="button" value="Play/Pause" class="button" id="playPause" style="width: 100%;" />
+            <div role="group" />
+              <input type="button" value="<" id="stepLeft" />
+              <input type="button" value=">" id="stepRight" />
+            </div>
+          </section>
+
+        <p id="matchState"></p>
+        <p id="matchTime"></p>
+        <p id="managerState"></p>
+        <p id="robotX"></p>
+        <p id="robotY"></p>
+        <p id="robotRotation"></p>
+        <p id="frontPose"></p>
+        <p id="visionRotation"></p>
+
+        <table class="striped" id="cycleTime">
+        </table>
       </center>
-
-      <p id="matchState"></p>
-      <p id="matchTime"></p>
-      <p id="managerState"></p>
-      <p id="robotX"></p>
-      <p id="robotY"></p>
-      <p id="robotRotation"></p>
-      <p id="frontPose"></p>
-      <p id="visionRotation"></p>
-
-      <table id="cycleTime">
-      </table>
 
       <hr>
 

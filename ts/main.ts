@@ -2,10 +2,18 @@ import * as d3 from "d3";
 import { degreesToRadians, clamp } from './funcs';
 import { parse } from 'csv-parse/browser/esm/sync';
 
+const playPause: HTMLButtonElement = document.getElementById("playPause") as HTMLButtonElement;
+const stepLeft: HTMLButtonElement = document.getElementById("stepLeft") as HTMLButtonElement;
+const stepRight: HTMLButtonElement = document.getElementById("stepRight") as HTMLButtonElement;
+const timeSlider = document.getElementById("timeSlider");
+const changeFile = document.getElementById("changedFile");
+const buttonsToDisable: HTMLButtonElement[] = [ playPause, stepLeft, stepRight ];
+
 let playing: boolean = false;
 let i: number = 0;
 let endIndex: number = 0;
 let startIndex: number = 0;
+let fileLoaded: boolean = false;
 
 let draw;
 let indexToSliderScale;
@@ -13,6 +21,13 @@ let sliderToIndexScale;
 let onSliderChange;
 
 function initialize(data: object[]) {
+  // adding function to the buttons
+  buttonsToDisable.forEach((button) => {button.disabled = false});
+  playPause.addEventListener("click", () => { playing = !playing; });
+  stepLeft.addEventListener("click", () => { stepLogging(true) });
+  stepRight.addEventListener("click", () => { stepLogging(false) });
+  timeSlider.addEventListener("input", () => { onSliderChange() });
+
   // Constants and helpers
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
   const ctx = canvas.getContext("2d");
@@ -209,12 +224,12 @@ async function changedFile(event) {
     const file = event.target.files.item(0);
     const text = await file.text();
     const jsonFromCSV = parse(text, {columns: true, skip_empty_lines: true});
+    fileLoaded = true;
 
     initialize(jsonFromCSV);
 }
 
-document.getElementById("playPause").addEventListener("click", () => { playing = !playing; });
-document.getElementById("stepLeft").addEventListener("click", () => { stepLogging(true) });
-document.getElementById("stepRight").addEventListener("click", () => { stepLogging(false) });
-document.getElementById("timeSlider").addEventListener("input", () => { onSliderChange() });
-document.getElementById("changedFile").addEventListener("change", () => { changedFile(event) });
+
+changeFile.addEventListener("change", () => { changedFile(event) });
+
+buttonsToDisable.forEach((button) => { button.disabled = true; });

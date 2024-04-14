@@ -15,7 +15,7 @@
 
         <input type="range" id="timeSlider" value="0" style="width: 645px;" />
         <center>
-          <section class="grid" style="width: 30%; height: 30%;" />
+          <section class="grid" style="width: 30%;" />
             <input type="button" value="Play/Pause" class="button" id="playPause" style="width: 100%;" />
             <div role="group" />
               <input type="button" value="<" id="stepLeft" />
@@ -23,17 +23,17 @@
             </div>
           </section>
 
-        <p id="matchState"></p>
-        <p id="matchTime"></p>
-        <p id="managerState"></p>
-        <p id="robotX"></p>
-        <p id="robotY"></p>
-        <p id="robotRotation"></p>
-        <p id="frontPose"></p>
-        <p id="visionRotation"></p>
+        <article style="width: 70%">
+          <p id="matchState"></p>
+          <p id="managerState"></p>
+          <p id="matchTime"></p>
+          <p id="robotPosition"></p>
+          <p id="robotRotation"></p>
+          <p id="frontPose"></p>
+          <p id="visionRotation"></p>
+        </article>
 
-        <table class="striped" id="cycleTime">
-        </table>
+        <table class="striped" id="cycleTime" style="width: 70%;"></table>
       </center>
 
       <hr>

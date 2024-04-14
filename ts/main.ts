@@ -97,11 +97,11 @@ function initialize(data: object[]) {
     document.getElementById("matchState").innerHTML = `Match State: ${matchState}`;
     document.getElementById("matchTime").innerHTML = `Match Time: ${String((Number(data[i]["time"]) - startTime).toFixed(2))} sec`;
     document.getElementById("managerState").innerHTML = `Manager State ${data[i]["Manager State"]}`;
-    document.getElementById("robotX").innerHTML = `Robot X: ${data[i]["Robot X"]}`;
-    document.getElementById("robotY").innerHTML = `Robot Y: ${data[i]["Robot Y"]}`;
-    document.getElementById("robotRotation").innerHTML = `Robot Rotation: ${degreesToRadians(Number(item["Robot Theta (deg)"]))}`;
-    document.getElementById("frontPose").innerHTML = `Front Pose: ${visionX}, ${visionY}`
-    document.getElementById("visionRotation").innerHTML = `Vision Rotation: ${visionRot}`
+    document.getElementById("robotX").innerHTML = `Robot X: ${Number(data[i]["Robot X"]).toFixed(2)}`;
+    document.getElementById("robotY").innerHTML = `Robot Y: ${Number(data[i]["Robot Y"]).toFixed(2)}`;
+    document.getElementById("robotRotation").innerHTML = `Robot Rotation: ${degreesToRadians(Number(item["Robot Theta (deg)"])).toFixed(2)}`;
+    document.getElementById("frontPose").innerHTML = `Front Pose: ${visionX.toFixed(2)}, ${visionY.toFixed(2)}`
+    document.getElementById("visionRotation").innerHTML = `Vision Rotation: ${visionRot.toFixed(2)}`
   };
 
   // Match slider

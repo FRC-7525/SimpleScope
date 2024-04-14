@@ -62,6 +62,12 @@ function initialize(data: object[]) {
   // Drawing function for Field2D
   draw = () => {
     const item = data[i];
+
+    if (i >= data.length || item == undefined) {
+      playing = false;
+      return;
+    }
+
     const robotX = Number(item["Robot X"]);
     const robotY = Number(item["Robot Y"]);
     const robotRotation = degreesToRadians(Number(item["Robot Theta (deg)"]));

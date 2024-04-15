@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { degreesToRadians, clamp } from './funcs';
+import { degreesToRadians, clamp, rotateAroundPoint } from './funcs';
 import { parse } from 'csv-parse/browser/esm/sync';
 
 const playPause: HTMLButtonElement = document.getElementById("playPause") as HTMLButtonElement;
@@ -20,6 +20,13 @@ let indexToSliderScale;
 let sliderToIndexScale;
 let onSliderChange;
 let drawRobotPose;
+
+const robotPoseArrow = new Image();
+robotPoseArrow.src = "images/arrow.svg"
+const visionPoseArrow = new Image();
+visionPoseArrow.src = "images/arrow.svg"
+const sidePoseArrow = new Image();
+sidePoseArrow.src = "images/arrow.svg"
 
 function initialize(data: object[]) {
   // adding function to the buttons
@@ -81,15 +88,19 @@ function initialize(data: object[]) {
 
   const FIELD_ROBOT_SIDE = fieldWidthScale(ROBOT_SIDE);
 
-  drawRobotPose = (ctx: CanvasRenderingContext2D, robotX: Number, robotY: Number, robotRotationInRadians: number, style: string) => {
+  drawRobotPose = (ctx: CanvasRenderingContext2D, robotX: Number, robotY: Number, robotRotationInRadians: number, style: string, arrowImage: any) => {
     const fieldX = fieldWidthScale(robotX);
     const fieldY = fieldHeightScale(robotY);
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.translate(fieldX, fieldY);
-    ctx.rotate(degreesToRadians(robotRotationInRadians));
-    ctx.translate(-fieldX, -fieldY);
+    rotateAroundPoint(ctx, fieldX, fieldY, robotRotationInRadians);
+
     ctx.strokeStyle = style;
+    rotateAroundPoint(ctx, fieldX, fieldY, 90);
+
+    ctx.drawImage(arrowImage, fieldX - (FIELD_ROBOT_SIDE / 2), fieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
+
+    rotateAroundPoint(ctx, fieldX, fieldY, 90);
     ctx.strokeRect(fieldX - (FIELD_ROBOT_SIDE / 2), fieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
   }
 
@@ -108,7 +119,7 @@ function initialize(data: object[]) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(img, 0, 0, FIELD_CANVAS_WIDTH, FIELD_CANVAS_HEIGHT);
 
-    drawRobotPose(ctx, robotX, robotY, robotRotation, "white");
+    drawRobotPose(ctx, robotX, robotY, robotRotation, "white", robotPoseArrow);
 
     let matchState = data[i]["Match State"];
     if (matchState === "AUTONOMOUS") {
@@ -120,7 +131,7 @@ function initialize(data: object[]) {
     const visionY = visionPose[1];
     const visionRot = visionPose[2];
 
-    drawRobotPose(ctx, visionX, visionY, visionRot, "green");
+    drawRobotPose(ctx, visionX, visionY, visionRot, "green", visionPoseArrow);
 
     if (item["Side Pose"] != undefined) {
       const sidePose = JSON.parse(item["Side Pose"]);
@@ -128,7 +139,7 @@ function initialize(data: object[]) {
       const sideY = sidePose[1];
       const sideRot = sidePose[2];
 
-      drawRobotPose(ctx, sideX, sideY, sideRot, "blue");
+      drawRobotPose(ctx, sideX, sideY, sideRot, "blue", sidePoseArrow);
 
       document.getElementById("sidePose").innerHTML = `Side Pose: ${sideX.toFixed(2)}, ${sideY.toFixed(2)}`;
     }

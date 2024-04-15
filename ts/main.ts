@@ -25,6 +25,8 @@ const robotPoseArrow = new Image();
 robotPoseArrow.src = "images/arrow.svg"
 const visionPoseArrow = new Image();
 visionPoseArrow.src = "images/arrow.svg"
+const sidePoseArrow = new Image();
+sidePoseArrow.src = "images/arrow.svg"
 
 function initialize(data: object[]) {
   // adding function to the buttons
@@ -137,7 +139,7 @@ function initialize(data: object[]) {
       const sideY = sidePose[1];
       const sideRot = sidePose[2];
 
-      drawRobotPose(ctx, sideX, sideY, sideRot, "blue");
+      drawRobotPose(ctx, sideX, sideY, sideRot, "blue", sidePoseArrow);
 
       document.getElementById("sidePose").innerHTML = `Side Pose: ${sideX.toFixed(2)}, ${sideY.toFixed(2)}`;
     }

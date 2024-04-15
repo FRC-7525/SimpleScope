@@ -19,6 +19,7 @@ let draw;
 let indexToSliderScale;
 let sliderToIndexScale;
 let onSliderChange;
+let drawRobotPose;
 
 function initialize(data: object[]) {
   // adding function to the buttons
@@ -37,15 +38,21 @@ function initialize(data: object[]) {
   const FIELD_HEIGHT = 8.21;
   const FIELD_CANVAS_WIDTH = 645;
   const FIELD_CANVAS_HEIGHT = 324;
+
   i = 0;
   playing = false;
 
   // Find start of match
-  while (data[i]["Match State"] !== "AUTONOMOUS") {
-    ++i;
-  }
+  try {
+    while (data[i]["Match State"] !== "AUTONOMOUS") {
+      ++i;
+    }
 
-  startIndex = i;
+    startIndex = i;
+  } catch (TypeError) { // if AUTONOMOUS isn't found...
+    i = 0;
+    startIndex = 0;
+  }
 
   // Find end of match
   endIndex = 0;
@@ -74,6 +81,18 @@ function initialize(data: object[]) {
 
   const FIELD_ROBOT_SIDE = fieldWidthScale(ROBOT_SIDE);
 
+  drawRobotPose = (ctx: CanvasRenderingContext2D, robotX: Number, robotY: Number, robotRotationInRadians: number, style: string) => {
+    const fieldX = fieldWidthScale(robotX);
+    const fieldY = fieldHeightScale(robotY);
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.translate(fieldX, fieldY);
+    ctx.rotate(degreesToRadians(robotRotationInRadians));
+    ctx.translate(-fieldX, -fieldY);
+    ctx.strokeStyle = style;
+    ctx.strokeRect(fieldX - (FIELD_ROBOT_SIDE / 2), fieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
+  }
+
   // Drawing function for Field2D
   draw = () => {
     const item = data[i];
@@ -85,16 +104,12 @@ function initialize(data: object[]) {
 
     const robotX = Number(item["Robot X"]);
     const robotY = Number(item["Robot Y"]);
-    const robotRotation = degreesToRadians(Number(item["Robot Theta (deg)"]));
-    const fieldX = fieldWidthScale(robotX);
-    const fieldY = fieldHeightScale(robotY);
+    const robotRotation = Number(item["Robot Theta (deg)"])
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(img, 0, 0, FIELD_CANVAS_WIDTH, FIELD_CANVAS_HEIGHT);
-    ctx.translate(fieldX, fieldY)
-    ctx.rotate(robotRotation)
-    ctx.translate(-fieldX, -fieldY)
-    ctx.strokeStyle = "white";
-    ctx.strokeRect(fieldX - (FIELD_ROBOT_SIDE / 2), fieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
+
+    drawRobotPose(ctx, robotX, robotY, robotRotation, "white");
+
     let matchState = data[i]["Match State"];
     if (matchState === "AUTONOMOUS") {
       matchState += ` (running: ${data[i]["Currently selected autonomous"]})`;
@@ -103,18 +118,21 @@ function initialize(data: object[]) {
     const visionPose = JSON.parse(item["Front Pose"]);
     const visionX = visionPose[0];
     const visionY = visionPose[1];
-    const visionRot = degreesToRadians(visionPose[2]);
+    const visionRot = visionPose[2];
 
-    const visionFieldX = fieldWidthScale(visionX);
-    const visionFieldY = fieldHeightScale(visionY);
+    drawRobotPose(ctx, visionX, visionY, visionRot, "green");
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.translate(visionFieldX, visionFieldY);
-    ctx.rotate(visionRot);
-    ctx.translate(-visionFieldX, -visionFieldY);
-    ctx.strokeStyle = "green";
-    ctx.strokeRect(visionFieldX - (FIELD_ROBOT_SIDE / 2), visionFieldY - (FIELD_ROBOT_SIDE / 2), FIELD_ROBOT_SIDE, FIELD_ROBOT_SIDE);
+    if (item["Side Pose"] != undefined) {
+      const sidePose = JSON.parse(item["Side Pose"]);
+      const sideX = sidePose[0];
+      const sideY = sidePose[1];
+      const sideRot = sidePose[2];
 
+      drawRobotPose(ctx, sideX, sideY, sideRot, "blue");
+
+      document.getElementById("sidePose").innerHTML = `Side Pose: ${sideX.toFixed(2)}, ${sideY.toFixed(2)}`;
+    }
+    
     document.getElementById("matchState").innerHTML = `Match State: ${matchState}`;
     document.getElementById("matchTime").innerHTML = `Match Time: ${String((Number(data[i]["time"]) - startTime).toFixed(2))} sec`;
     document.getElementById("managerState").innerHTML = `Manager State ${data[i]["Manager State"]}`;

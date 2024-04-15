@@ -2,10 +2,18 @@ import * as d3 from "d3";
 import { degreesToRadians, clamp } from './funcs';
 import { parse } from 'csv-parse/browser/esm/sync';
 
+const playPause: HTMLButtonElement = document.getElementById("playPause") as HTMLButtonElement;
+const stepLeft: HTMLButtonElement = document.getElementById("stepLeft") as HTMLButtonElement;
+const stepRight: HTMLButtonElement = document.getElementById("stepRight") as HTMLButtonElement;
+const timeSlider = document.getElementById("timeSlider");
+const changeFile = document.getElementById("changedFile");
+const buttonsToDisable: HTMLButtonElement[] = [ playPause, stepLeft, stepRight ];
+
 let playing: boolean = false;
 let i: number = 0;
 let endIndex: number = 0;
 let startIndex: number = 0;
+let fileLoaded: boolean = false;
 
 let draw;
 let indexToSliderScale;
@@ -14,6 +22,13 @@ let onSliderChange;
 let drawRobotPose;
 
 function initialize(data: object[]) {
+  // adding function to the buttons
+  buttonsToDisable.forEach((button) => {button.disabled = false});
+  playPause.addEventListener("click", () => { playing = !playing; });
+  stepLeft.addEventListener("click", () => { stepLogging(true) });
+  stepRight.addEventListener("click", () => { stepLogging(false) });
+  timeSlider.addEventListener("input", () => { onSliderChange() });
+
   // Constants and helpers
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
   const ctx = canvas.getContext("2d");
@@ -81,6 +96,12 @@ function initialize(data: object[]) {
   // Drawing function for Field2D
   draw = () => {
     const item = data[i];
+
+    if (i >= data.length || item == undefined) {
+      playing = false;
+      return;
+    }
+
     const robotX = Number(item["Robot X"]);
     const robotY = Number(item["Robot Y"]);
     const robotRotation = Number(item["Robot Theta (deg)"])
@@ -109,17 +130,16 @@ function initialize(data: object[]) {
 
       drawRobotPose(ctx, sideX, sideY, sideRot, "blue");
 
-      document.getElementById("sidePose").innerHTML = `Side Pose: ${sideX}, ${sideY}`;
+      document.getElementById("sidePose").innerHTML = `Side Pose: ${sideX.toFixed(2)}, ${sideY.toFixed(2)}`;
     }
     
     document.getElementById("matchState").innerHTML = `Match State: ${matchState}`;
     document.getElementById("matchTime").innerHTML = `Match Time: ${String((Number(data[i]["time"]) - startTime).toFixed(2))} sec`;
     document.getElementById("managerState").innerHTML = `Manager State ${data[i]["Manager State"]}`;
-    document.getElementById("robotX").innerHTML = `Robot X: ${data[i]["Robot X"]}`;
-    document.getElementById("robotY").innerHTML = `Robot Y: ${data[i]["Robot Y"]}`;
-    document.getElementById("robotRotation").innerHTML = `Robot Rotation: ${degreesToRadians(Number(item["Robot Theta (deg)"]))}`;
-    document.getElementById("frontPose").innerHTML = `Front Pose: ${visionX}, ${visionY}`;
-    document.getElementById("visionRotation").innerHTML = `Vision Rotation: ${visionRot}`;
+    document.getElementById("robotPosition").innerHTML = `Robot Position: (${Number(data[i]["Robot X"]).toFixed(2)}, ${Number(data[i]["Robot Y"]).toFixed(2)})`;
+    document.getElementById("robotRotation").innerHTML = `Robot Rotation: ${degreesToRadians(Number(item["Robot Theta (deg)"])).toFixed(2)}`;
+    document.getElementById("frontPose").innerHTML = `Front Pose: (${visionX.toFixed(2)}, ${visionY.toFixed(2)})`
+    document.getElementById("visionRotation").innerHTML = `Vision Rotation: ${visionRot.toFixed(2)}`
   };
 
   // Match slider
@@ -227,12 +247,12 @@ async function changedFile(event) {
     const file = event.target.files.item(0);
     const text = await file.text();
     const jsonFromCSV = parse(text, {columns: true, skip_empty_lines: true});
+    fileLoaded = true;
 
     initialize(jsonFromCSV);
 }
 
-document.getElementById("playPause").addEventListener("click", () => { playing = !playing; });
-document.getElementById("stepLeft").addEventListener("click", () => { stepLogging(true) });
-document.getElementById("stepRight").addEventListener("click", () => { stepLogging(false) });
-document.getElementById("timeSlider").addEventListener("input", () => { onSliderChange() });
-document.getElementById("changedFile").addEventListener("change", () => { changedFile(event) });
+
+changeFile.addEventListener("change", () => { changedFile(event) });
+
+buttonsToDisable.forEach((button) => { button.disabled = true; });
